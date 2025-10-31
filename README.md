@@ -11,6 +11,11 @@ Problem statement:
 Members want to be able to see Visits and attendance inside the profile screen
 ```
 
+## Previous design of member profile screen
+![Screenshot](public/design_before.png)
+
+## New version shared by design team
+
 ![Screenshot](public/design_decomposition.png)
 
 # Task 2 - Complete the form! - 35min (pair programming)

@@ -1,75 +1,78 @@
-import React from 'react';
-import moment, { Moment } from 'moment';
+import React, { useEffect } from "react";
+import moment, { Moment } from "moment";
 
-import logo from './abc-glofox-logo.png';
-import './App.css';
+import logo from "./abc-glofox-logo.png";
+import "./App.css";
 
 type Staff = {
   createdAt: string;
   id: string;
   name: string;
-  type: 'trainer' | 'receptionist' | 'admin';
-}
+  type: "trainer" | "receptionist" | "admin";
+};
 type StaffAPIResponse = Staff[];
 type Trainer = Staff & {
-  type: 'trainer'
+  type: "trainer";
 };
 
 type AppointmentAPIRequestBody = {
   name: string;
   email: string;
   dateTime: string;
-  trainerId: Trainer['id'];
-}
+  trainerId: Trainer["id"];
+};
 
-const STAFF_ENDPOINT = 'https://64df526f71c3335b25826fcc.mockapi.io/trainers';
-const APPOINTMENT_ENDPOINT = 'https://64df526f71c3335b25826fcc.mockapi.io/appointment';
+const STAFF_ENDPOINT = "https://64df526f71c3335b25826fcc.mockapi.io/trainers";
+const APPOINTMENT_ENDPOINT =
+  "https://64df526f71c3335b25826fcc.mockapi.io/appointment";
 
 function toMoment(x: string): Moment {
   const date = moment(x);
   if (date.isValid()) {
     return date;
   }
-  throw new Error('computer says no');
+  throw new Error("computer says no");
 }
 
 function isTrainer(x: Staff): x is Trainer {
-  return x.type === 'trainer';
+  return x.type === "trainer";
 }
 
 const config = {
   name: {
-    id: 'name',
-    name: 'name',
-    type: 'email',
+    id: "name",
+    name: "name",
+    type: "email",
     minLength: 1,
     maxLength: 10,
     required: true,
   },
   email: {
-    id: 'email',
-    name: 'email',
-    type: 'email',
+    id: "email",
+    name: "email",
+    type: "email",
     minLength: 5,
     maxLength: 100,
     required: true,
   },
   dateTime: {
-    id: 'dateTime',
-    name: 'dateTime',
-    type: 'datetime-local',
-    min: '1900-01-01',
-    max: '2005-31-12',
+    id: "dateTime",
+    name: "dateTime",
+    type: "datetime-local",
+    min: "1900-01-01",
+    max: "2005-31-12",
     required: true,
   },
   trainer: {
-    id: 'trainer',
-    name: 'trainer',
-    type: 'select',
-    options: [/* fetch */],
+    id: "trainer",
+    name: "trainer",
+    type: "select",
+    options: [
+      /* fetch */
+    ],
     required: true,
-  }
-}
+  },
+};
 
 function onSubmit(e: React.FormEvent<HTMLFormElement>) {
   // POST to ${APPOINTMENTS_ENDPOINT}
@@ -77,6 +80,26 @@ function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 }
 
 function App() {
+  const [trainers, setTrainers] = React.useState<Trainer[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch trainers from STAFF_ENDPOINT
+
+    fetch(STAFF_ENDPOINT)
+      .then((response) => response.json())
+      .then((data: StaffAPIResponse) => {
+        const trainers = data.filter(isTrainer);
+        setTrainers(trainers);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching trainers:", error);
+        setError("Failed to load trainers");
+      });
+  }, []);
+
   return (
     <div className="App">
       <header className="app__header">
@@ -84,13 +107,13 @@ function App() {
       </header>
       <main className="appmain">
         <form onSubmit={onSubmit}>
-          <input id='name' name='name' />
+          <input id="name" name="name" />
           <label className="field">
             Email:
-            <input id='email' name='email' />
+            <input id="email" name="email" />
           </label>
-          <input  id='dateTime' type="datetime-local" />
-          <input  id='trainer' name='trainer' />
+          <input id="dateTime" type="datetime-local" />
+          <input id="trainer" name="trainer" />
           <input type="submit" />
         </form>
       </main>

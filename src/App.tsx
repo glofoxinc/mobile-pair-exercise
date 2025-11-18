@@ -80,26 +80,6 @@ function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 }
 
 function App() {
-  const [trainers, setTrainers] = React.useState<Trainer[]>([]);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  useEffect(() => {
-    // Fetch trainers from STAFF_ENDPOINT
-
-    fetch(STAFF_ENDPOINT)
-      .then((response) => response.json())
-      .then((data: StaffAPIResponse) => {
-        const trainers = data.filter(isTrainer);
-        setTrainers(trainers);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching trainers:", error);
-        setError("Failed to load trainers");
-      });
-  }, []);
-
   return (
     <div className="App">
       <header className="app__header">
